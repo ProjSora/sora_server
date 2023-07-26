@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure-t6guv%72ui&_8!m%9fmzt+psm2ek10b0n3gac4)#n$q@c+aehb
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -37,6 +37,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'rest_framework',
+    'sora',
 ]
 
 MIDDLEWARE = [
@@ -75,8 +77,13 @@ WSGI_APPLICATION = 'appserver.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE' : 'django.db.backends.mysql',
+        'HOST' : '3.38.6.103',
+        'NAME' : 'sora_db',
+        'USER' : 'root',
+        'PASSWORD' : 'admin123!',
+        'PORT' : '3306',
+        'OPTIONS' : {'charset' : 'utf8mb4'},
     }
 }
 
