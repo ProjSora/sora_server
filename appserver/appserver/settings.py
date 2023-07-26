@@ -75,18 +75,6 @@ WSGI_APPLICATION = 'appserver.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE' : 'django.db.backends.mysql',
-        'HOST' : '3.38.6.103',
-        'NAME' : 'sora_db',
-        'USER' : 'root',
-        'PASSWORD' : 'admin123!',
-        'PORT' : '3306',
-        'OPTIONS' : {'charset' : 'utf8mb4'},
-    }
-}
-
 
 # Password validation
 # https://docs.djangoproject.com/en/4.0/ref/settings/#auth-password-validators
