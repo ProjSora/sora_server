@@ -22,7 +22,7 @@ class AppLogin(APIView):
         
         if user is None:
             return Response(dict(msg="해당 email의 사용자가 없습니다."))
-        if check_password(user_pw, user.user_pw) is False:
+        if check_password(user_pw, user.user_pw) is True:
             return Response(dict(msg="로그인 성공", user_id=user.user_id, university=user.university,
                                 student_id=user.student_id, department=user.department, description=user.description))
         else:
@@ -64,3 +64,34 @@ class RegistUser(APIView):
         user = serializer.create(serializer.data)
         
         return Response(data=UserSerializer(user).data)
+    
+class writePost(APIView):
+    '''
+        게시글 작성 시 사용되는 API
+        - request.data에 user_id, post_name, post_content를 담아서 POST 요청을 보내면 아래 사항 확인
+        - 게시글 제목이 없으면,
+        - msg: "게시글 제목을 입력해주세요."를 반환
+        - 게시글 내용이 없으면,
+        - msg: "게시글 내용을 입력해주세요."를 반환
+        - 작성 권한이 없으면,
+        - msg: "작성 권한이 없습니다."를 반환
+        - 게시글 작성에 성공하면,
+        - msg: "게시글 작성에 성공했습니다."를 반환
+    '''
+    def post(self, request):
+        user_id = request.data.get('user_id', "")
+        post_name = request.data.get('post_name', "")
+        post_content = request.data.get('post_content', "")
+        user = UserInfo.objects.filter(user_id=user_id).first()
+        
+        if post_name == "":
+            return Response(dict(msg="게시글 제목을 입력해주세요."))
+        if post_content == "":
+            return Response(dict(msg="게시글 내용을 입력해주세요."))
+        if user.auth == False:
+            return Response(dict(msg="작성 권한이 없습니다."))
+        
+        post = Post.objects.create(user_id=user, post_name=post_name, post_content=post_content)
+        
+        #return Response(dict(msg="게시글 작성에 성공했습니다."))
+        return Response(dict(msg="게시글 작성에 성공했습니다.", post_id=post.post_id))
