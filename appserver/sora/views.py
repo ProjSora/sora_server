@@ -97,3 +97,80 @@ class WritePost(APIView):
                             post_id=post.post_id, post_title=post.post_title, 
                             post_content=post.post_content, create_at=post.create_at, 
                             update_at=post.update_at))
+
+class ReadPost(APIView):
+    '''
+        게시글 조회시 사용하는 API
+        - request.data에 post_id를 담아서 POST 요청을 보내면 아래 사항 확인
+        - 해당 post_id의 게시글이 존재하지 않으면,
+        - msg: "해당 게시글이 존재하지 않습니다."를 반환
+        - 해당 post_id의 게시글이 존재하면,
+        - msg: "게시글 조회에 성공했습니다.",
+        - post_views + 1, post_id, post_title, post_content을 반환
+    '''
+    def post(self, request):
+        post_id = request.data.get('post_id', "")
+        post = Post.objects.filter(post_id=post_id).first()
+        
+        if post is None:
+            return Response(dict(msg="해당 게시글이 존재하지 않습니다."))
+        
+        post.post_views += 1
+        post.save()
+        return Response(dict(msg="게시글 조회에 성공했습니다.", 
+                            post_id=post.post_id, post_views=post.post_views,
+                            post_title=post.post_title, 
+                            post_content=post.post_content))
+        
+class UpdatePost(APIView):
+    '''
+        게시글 수정시 사용하는 API
+        - request.data에 post_id, post_title, post_content를 담아서 POST 요청을 보내면 아래 사항 확인
+        - 해당 post_id의 게시글이 존재하지 않으면,
+        - msg: "해당 게시글이 존재하지 않습니다."를 반환
+        - 해당 post_id의 게시글이 존재하면,
+        - msg: "게시글 수정에 성공했습니다.",
+        - post_title, post_content, update_at을 반환
+        - post_title이 없으면,
+        - msg: "게시글 제목을 입력해주세요."를 반환
+        - post_content가 없으면,
+        - msg: "게시글 내용을 입력해주세요."를 반환
+        - update_at 수정
+    '''
+    def post(self, request):
+        post_id = request.data.get('post_id', "")
+        post_title = request.data.get('post_title', "")
+        post_content = request.data.get('post_content', "")
+        post = Post.objects.filter(post_id=post_id).first()
+        
+        if post is None:
+            return Response(dict(msg="해당 게시글이 존재하지 않습니다."))
+        
+        if post_title == "":
+            return Response(dict(msg="게시글 제목을 입력해주세요."))
+        if post_content == "":
+            return Response(dict(msg="게시글 내용을 입력해주세요."))
+        
+        post.post_title = post_title
+        post.post_content = post_content
+        post.save()
+        return Response(dict(msg="게시글 수정에 성공했습니다."))
+
+class DeletePost(APIView):
+    '''
+        게시글 삭제시 사용하는 API
+        - request.data에 post_id를 담아서 POST 요청을 보내면 아래 사항 확인
+        - 해당 post_id의 게시글이 존재하지 않으면,
+        - msg: "해당 게시글이 존재하지 않습니다."를 반환
+        - 해당 post_id의 게시글이 존재하면,
+        - msg: "게시글 삭제에 성공했습니다."를 반환
+    '''
+    def post(self, request):
+        post_id = request.data.get('post_id', "")
+        post = Post.objects.filter(post_id=post_id).first()
+        
+        if post is None:
+            return Response(dict(msg="해당 게시글이 존재하지 않습니다."))
+        
+        post.delete()
+        return Response(dict(msg="게시글 삭제에 성공했습니다."))
