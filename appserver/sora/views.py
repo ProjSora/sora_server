@@ -82,7 +82,7 @@ class WritePost(APIView):
         user_id = request.data.get('user_id', "")
         post_title = request.data.get('post_title', "")
         post_content = request.data.get('post_content', "")
-        user = UserInfo.objects.filter(user_id=user_id).first()
+        user = list(UserInfo.objects.filter(user_id=user_id).first())
         
         if post_title == "":
             return Response(dict(msg="게시글 제목을 입력해주세요."))
