@@ -82,7 +82,7 @@ class WritePost(APIView):
         user_id = request.data.get('user_id', "")
         post_title = request.data.get('post_title', "")
         post_content = request.data.get('post_content', "")
-        user = UserInfo.objects.filter(user_id=user_id).first()
+        user = UserInfo.objects.get(user_id=user_id)
         
         if post_title == "":
             return Response(dict(msg="게시글 제목을 입력해주세요."))
@@ -92,9 +92,8 @@ class WritePost(APIView):
             return Response(dict(msg="작성 권한이 없습니다."))
         
         post = Post.objects.create(user_id=user, post_title=post_title, post_content=post_content)
-        
         #return Response(dict(msg="게시글 작성에 성공했습니다."))
-        return Response(dict(msg="게시글 작성에 성공했습니다.", user_id = post.user_id, 
+        return Response(dict(msg="게시글 작성에 성공했습니다.", 
                             post_id=post.post_id, post_title=post.post_title, 
                             post_content=post.post_content, create_at=post.create_at, 
                             update_at=post.update_at))
