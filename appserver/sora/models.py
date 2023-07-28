@@ -1,10 +1,9 @@
 from django.db import models
-from encrypted_fields import fields
 
 class UserInfo(models.Model):
     user_id = models.AutoField(primary_key=True)
     email = models.EmailField(verbose_name='이메일', max_length=255, null=False, default="")
-    user_pw = fields.EncryptedCharField(max_length=255, null=False, default=False)
+    user_pw = models.CharField(max_length=255, null=False, default=False)
     gender = models.CharField(verbose_name='성별', max_length=10, null=False, default='male')
     phone_number = models.CharField(verbose_name='전화번호', max_length=11, null=False, default="")
     university = models.CharField(verbose_name='학교', max_length=20, null=False, default="")
@@ -65,6 +64,7 @@ class Follower(models.Model):
 class Post(models.Model):
     post_id = models.AutoField(primary_key=True)
     user_id = models.ForeignKey(UserInfo, on_delete=models.CASCADE, db_column='user_id', null=False)
+    university = models.CharField(verbose_name='학교', max_length=20, null=False, default="")
     post_title = models.CharField(verbose_name='게시글 제목', max_length=255, null=False, default="")
     post_content = models.CharField(verbose_name='게시글 내용', max_length=255, null=False, default="")
     post_views = models.IntegerField(verbose_name='게시글 조회수', null=False, default=0)
