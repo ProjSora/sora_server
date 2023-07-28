@@ -91,10 +91,10 @@ class WritePost(APIView):
         if user.auth == False:
             return Response(dict(msg="작성 권한이 없습니다."))
         
-        post = Post.objects.create(user_id=user, post_name=post_title, post_content=post_content)
+        post = Post.objects.create(user_id=user, post_title=post_title, post_content=post_content)
         
         #return Response(dict(msg="게시글 작성에 성공했습니다."))
         return Response(dict(msg="게시글 작성에 성공했습니다.", user_id = post.user_id, 
-                            post_id=post.post_id, post_name=post.name, 
+                            post_id=post.post_id, post_title=post.name, 
                             post_content=post.post_content, create_at=post.create_at, 
                             update_at=post.update_at))
