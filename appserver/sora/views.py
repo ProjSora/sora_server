@@ -95,6 +95,6 @@ class WritePost(APIView):
         
         #return Response(dict(msg="게시글 작성에 성공했습니다."))
         return Response(dict(msg="게시글 작성에 성공했습니다.", user_id = post.user_id, 
-                            post_id=post.post_id, post_title=post.name, 
+                            post_id=post.post_id, post_title=post.post_title, 
                             post_content=post.post_content, create_at=post.create_at, 
                             update_at=post.update_at))
