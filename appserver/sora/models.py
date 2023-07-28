@@ -1,9 +1,10 @@
 from django.db import models
+from encrypted_fields import fields
 
 class UserInfo(models.Model):
     user_id = models.AutoField(primary_key=True)
     email = models.EmailField(verbose_name='이메일', max_length=255, null=False, default="")
-    user_pw = models.CharField(max_length=255, null=False, default=False)
+    user_pw = fields.EncryptedCharField(max_length=255, null=False, default=False)
     gender = models.CharField(verbose_name='성별', max_length=10, null=False, default='male')
     phone_number = models.CharField(verbose_name='전화번호', max_length=11, null=False, default="")
     university = models.CharField(verbose_name='학교', max_length=20, null=False, default="")
