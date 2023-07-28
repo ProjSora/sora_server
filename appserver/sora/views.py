@@ -65,7 +65,7 @@ class RegistUser(APIView):
         
         return Response(data=UserSerializer(user).data)
     
-class writePost(APIView):
+class WritePost(APIView):
     '''
         게시글 작성 시 사용되는 API
         - request.data에 user_id, post_name, post_content를 담아서 POST 요청을 보내면 아래 사항 확인
