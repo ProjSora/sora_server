@@ -65,6 +65,90 @@ class RegistUser(APIView):
         
         return Response(data=UserSerializer(user).data)
     
+class ReadUserInfo(APIView):
+    '''
+        사용자 정보 조회 시 사용되는 API
+        - request.data에 user_id를 담아서 POST 요청을 보내면 아래 사항 확인
+        - 해당 user_id의 사용자가 존재하면
+        - UserInfo data return
+        - 해당 user_id의 사용자가 존재하지 않으면
+        - msg: "해당 사용자가 존재하지 않습니다."를 반환
+    '''
+    def post(self, request):
+        user_id = request.data.get('user_id', "")
+        user = UserInfo.objects.filter(user_id=user_id).first()
+        
+        if user is None:
+            return Response(dict(msg="해당 사용자가 존재하지 않습니다."))
+        
+        return Response(data=UserSerializer(user).data)
+    
+    
+class UpdateUserInfo(APIView):
+    '''
+        사용자 정보 수정 시 사용되는 API
+        - request.data에 user_id를 담아서 POST 요청을 보내면 아래 사항 확인
+        - 해당 user_id의 사용자가 존재하면
+        - msg: "사용자 정보 수정에 성공했습니다.",
+        - 수정 된 사용자 정보를 반환
+        - 해당 user_id의 사용자가 존재하지 않으면
+        - msg: "해당 사용자가 존재하지 않습니다."를 반환
+    '''
+    def post(self, request):
+        user_id = request.data.get('user_id', "")
+        user = UserInfo.objects.filter(user_id=user_id).first()
+        
+        if user is None:
+            return Response(dict(msg="해당 사용자가 존재하지 않습니다."))
+        
+        for item in request.data:
+            if item == "user_pw":
+                user.user_pw = make_password(request.data[item])
+            elif item == "phone_number":
+                user.phone_number = request.data[item]
+            elif item == "university":
+                user.university = request.data[item]
+                user.auth = False
+                user.student_id = ""
+                user.department = ""
+            elif item == "student_id":
+                user.student_id = request.data[item]
+                user.department = ""
+                user.auth = False
+            elif item == "department":
+                user.department = request.data[item]
+                user.auth = False
+            elif item == "description":
+                user.description = request.data[item]
+                
+        
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(data=UserSerializer(user).data)
+        return Response(serializer.errors)
+    
+class DeleteUserInfo(APIView):
+    '''
+        사용자 정보 삭제 시 사용되는 API
+        - request.data에 user_id를 담아서 POST 요청을 보내면 아래 사항 확인
+        - 해당 user_id의 사용자가 존재하면
+        - msg: "사용자 정보 삭제에 성공했습니다."를 반환
+        - 해당 user_id의 사용자가 존재하지 않으면
+        - msg: "해당 사용자가 존재하지 않습니다."를 반환
+    '''
+    def post(self, request):
+        user_id = request.data.get('user_id', "")
+        user = UserInfo.objects.filter(user_id=user_id).first()
+        
+        if user is None:
+            return Response(dict(msg="해당 사용자가 존재하지 않습니다."))
+        
+        serializer = UserSerializer(user, data=request.data)
+        if serializer.is_valid():
+            serializer.delete()
+            return Response(dict(msg="사용자 정보 삭제에 성공했습니다."))
+        
 class WritePost(APIView):
     '''
         게시글 작성 시 사용되는 API
