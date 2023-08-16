@@ -4,6 +4,8 @@ from . import views
 urlpatterns = [
     url('app_login', views.AppLogin.as_view(), name='app_login'),
     url('regist_user', views.RegistUser.as_view(), name='regist_user'),
+    url('email_auth', views.EmailAuth.as_view(), name='email_auth'),
+    url('phone_auth', views.PhoneAuth.as_view(), name='phone_auth'),
     url('read_user', views.ReadUserInfo.as_view(), name='read_user'),
     url('update_user', views.UpdateUserInfo.as_view(), name='update_user'),
     url('delete_user', views.DeleteUserInfo.as_view(), name='delete_user'),
