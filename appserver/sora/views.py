@@ -4,6 +4,8 @@ from .models import *
 from django.contrib.auth.hashers import make_password, check_password
 from .serializer import UserSerializer
 
+import random
+
 class AppLogin(APIView):
     '''
         어플리케이션 로그인 시 사용되는 API
@@ -43,27 +45,46 @@ class RegistUser(APIView):
     def post(self, request):
         serializer = UserSerializer(request.data)
         
-        if UserInfo.objects.filter(email=serializer.data["email"]).exists():
-            user = UserInfo.objects.filter(email=serializer.data["email"]).first()
-            data = dict(
-                msg="이미 가입 된 이메일입니다.",
-                user_id=user.user_id,
-                user_pw=user.user_pw,
-            )
-            return Response(data)
-        
-        if UserInfo.objects.filter(phone_number=serializer.data["phone_number"]).exists():
-            user = UserInfo.objects.filter(phone_number=serializer.data["phone_number"]).first()
-            data = dict(
-                msg="이미 가입 된 전화번호입니다.",
-                user_id=user.user_id,
-                user_pw=user.user_pw,
-            )
-            return Response(data)
-        
         user = serializer.create(serializer.data)
         
         return Response(data=UserSerializer(user).data)
+    
+class EmailAuth(APIView):
+    '''
+        회원가입시 이미엘 인증을 위한 API
+        - request.data에 email을 담아서 POST 요청을 보내면 아래 사항 확인
+        - 해당 email의 사용자가 존재하면
+        - msg: "이미 가입 된 이메일입니다."를 반환
+    '''
+    def post(self, request):
+        email = request.data.get('email', "")
+        user = UserInfo.objects.filter(email=email).first()
+        
+        if user is None:
+            return Response(dict(state_code="200", msg="인증번호가 전송되었습니다."))
+        else:
+            return Response(dict(state_code="400", msg="이미 가입 된 이메일입니다."))
+    
+class PhoneAuth(APIView):
+    '''
+        회원가입시 전화번호 인증을 위한 API
+        - request.data에 phone_number를 담아서 POST 요청을 보내면 아래 사항 확인
+        - 해당 phone_number의 사용자가 존재하면
+        - msg: "이미 가입 된 전화번호입니다."를 반환
+        - 해당 phone_number의 사용자가 존재하지 않으면
+        - msg: "인증번호가 전송되었습니다."를 반환
+    '''
+    def post(self, request):
+        phone_number = request.data.get('phone_number', "")
+        print(phone_number)
+        user = UserInfo.objects.filter(phone_number=phone_number).first()
+        
+        if user is None:
+            randn = random.randint(100000, 999999)
+            print(randn)
+            return Response(dict(auth_number=str(randn), state_code= "200", msg="인증번호가 전송되었습니다."))
+        else:
+            return Response(dict(state_code="400", msg="이미 가입 된 전화번호입니다."))
     
 class ReadUserInfo(APIView):
     '''
