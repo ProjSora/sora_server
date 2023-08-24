@@ -14,5 +14,5 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserInfo
         fields = ("user_id", "email", "user_pw", "gender", "phone_number",
-                "university", "student_id", "department", "description",
+                "university", "student_id", "department", "description",  "user_name", "user_nick", "user_mbti",
                 "create_at", "update_at", "auth")

@@ -11,6 +11,10 @@ class UserInfo(models.Model):
     department = models.CharField(verbose_name='학과', max_length=20, null=False, default="")
     description = models.CharField(verbose_name='자기소개', max_length=255, null=False, default="")
     
+    user_name = models.CharField(verbose_name='유저 이름', max_length=20, null=False, default="")
+    user_nick = models.CharField(verbose_name='유저 닉네임', max_length=20, null=False, default="")
+    user_mbti = models.CharField(verbose_name='유저 mbti', max_length=20, null=False, default="")
+    
     create_at = models.DateTimeField(verbose_name='생성일', auto_now_add=True)
     update_at = models.DateTimeField(verbose_name='수정일', auto_now=True)
     auth = models.BooleanField(verbose_name='인증여부', null=False, default=False)

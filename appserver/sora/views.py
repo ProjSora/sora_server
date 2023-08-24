@@ -25,8 +25,13 @@ class AppLogin(APIView):
         if user is None:
             return Response(dict(msg="해당 email의 사용자가 없습니다."))
         if check_password(user_pw, user.user_pw) is True:
-            return Response(dict(msg="로그인 성공", user_id=user.user_id, university=user.university,
-                                student_id=user.student_id, department=user.department, description=user.description))
+            return Response(dict(user_id=user.user_id, email=user.email,
+                                gender=user.gender, phone_number=user.phone_number,
+                                university=user.university, student_id=user.student_id,
+                                department=user.department, description=user.description,
+                                auth=user.auth, user_nick=user.user_nick,
+                                user_name=user.user_name, user_mbti=user.user_mbti,
+                                status="success"))
         else:
             return Response(dict(msg="비밀번호가 일치하지 않습니다."))
         
@@ -84,6 +89,7 @@ class PhoneAuth(APIView):
             print(randn)
             return Response(dict(auth_number=str(randn), state_code= "200", msg="인증번호가 전송되었습니다."))
         else:
+            print("이미 가입 된 전화번호입니다.")
             return Response(dict(state_code="400", msg="이미 가입 된 전화번호입니다."))
     
 class ReadUserInfo(APIView):
@@ -96,8 +102,8 @@ class ReadUserInfo(APIView):
         - msg: "해당 사용자가 존재하지 않습니다."를 반환
     '''
     def post(self, request):
-        user_id = request.data.get('user_id', "")
-        user = UserInfo.objects.filter(user_id=user_id).first()
+        email = request.data.get('eamil', "")
+        user = UserInfo.objects.filter(email=email).first()
         
         if user is None:
             return Response(dict(msg="해당 사용자가 존재하지 않습니다."))
