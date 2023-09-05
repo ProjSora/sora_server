@@ -23,7 +23,7 @@ class AppLogin(APIView):
         user = UserInfo.objects.filter(email=email).first()
         
         if user is None:
-            return Response(dict(msg="해당 email의 사용자가 없습니다."))
+            return Response(dict(msg="해당 email의 사용자가 없습니다.", state="fail"))
         if check_password(user_pw, user.user_pw) is True:
             return Response(dict(user_id=user.user_id, email=user.email,
                                 gender=user.gender, phone_number=user.phone_number,
@@ -33,7 +33,7 @@ class AppLogin(APIView):
                                 user_name=user.user_name, user_mbti=user.user_mbti,
                                 status="success"))
         else:
-            return Response(dict(msg="비밀번호가 일치하지 않습니다."))
+            return Response(dict(msg="비밀번호가 일치하지 않습니다.", state="fail"))
         
 class RegistUser(APIView):
     '''
@@ -129,10 +129,19 @@ class UpdateUserInfo(APIView):
             return Response(dict(msg="해당 사용자가 존재하지 않습니다."))
         
         for item in request.data:
-            if item == "user_pw":
+            if item == "email":
+                if UserInfo.objects.filter(email=request.data[item]).first() is not None:
+                    return Response(dict(msg="이미 가입 된 이메일입니다."))
+                else:
+                    user.email = request.data[item]
+            elif item == "user_pw":
                 user.user_pw = make_password(request.data[item])
             elif item == "phone_number":
                 user.phone_number = request.data[item]
+            elif item == "user_nick":
+                user.user_nick = request.data[item]
+            elif item == "user_mbti":
+                user.user_mbti = request.data[item]
             elif item == "university":
                 user.university = request.data[item]
                 user.auth = False
